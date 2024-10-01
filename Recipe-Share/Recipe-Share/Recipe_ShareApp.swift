@@ -10,9 +10,14 @@ import FirebaseCore
 
 @main
 struct Recipe_ShareApp: App {
+    
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
         }
     }
 }
