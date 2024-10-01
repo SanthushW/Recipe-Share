@@ -1,14 +1,12 @@
-//
-//  login.swift
-//  Recipe-Share
-//
-//  Created by COCOMPBSC23.1p-030 on 2024-09-28.
-//
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct LoginView: View {
-    @State private var phoneNumber: String = ""
+    @State private var email: String = ""
     @State private var password: String = ""
+    @State private var errorMessage: String?
+    @State private var showingErrorAlert = false
     
     var body: some View {
         VStack {
@@ -25,10 +23,10 @@ struct LoginView: View {
                 .foregroundColor(.white)
                 .padding(.top, 2)
             
-            // Phone Number Field
-            TextField("Phone number", text: $phoneNumber)
+            // Email Field
+            TextField("Email", text: $email)
                 .padding()
-                .background(Color.white.opacity(1)) // Adjust opacity for a lighter gray
+                .background(Color.white.opacity(1))
                 .cornerRadius(10)
                 .padding(.top, 20)
 
@@ -41,7 +39,7 @@ struct LoginView: View {
             
             // Login Button
             Button(action: {
-                // Handle login action
+                login()
             }) {
                 Text("Login")
                     .font(.headline)
@@ -52,6 +50,9 @@ struct LoginView: View {
                     .cornerRadius(10)
             }
             .padding(.top, 20)
+            .alert(isPresented: $showingErrorAlert) {
+                Alert(title: Text("Login Error"), message: Text(errorMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
+            }
             
             // Forgot Password Link
             Button(action: {
@@ -115,7 +116,21 @@ struct LoginView: View {
         .padding(.horizontal, 30)
         .background(Color.orange)
         .ignoresSafeArea()
-        .frame(maxWidth: .infinity, maxHeight: .infinity) // Make it full screen
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    // Firebase Login Function
+    func login() {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                // Handle login error
+                errorMessage = error.localizedDescription
+                showingErrorAlert = true
+                return
+            }
+            // Handle successful login
+            print("User logged in successfully")
+        }
     }
 }
 
